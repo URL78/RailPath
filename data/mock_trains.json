@@ -1,0 +1,83 @@
+[
+  {
+    "train_no": "10103",
+    "train_name": "Mandovi Express",
+    "from_station": "SURAT",
+    "to_station": "MAJN",
+    "departure": "18:00",
+    "arrival": "09:30+1",
+    "duration_mins": 930
+  },
+  {
+    "train_no": "22113",
+    "train_name": "KSK Superfast",
+    "from_station": "SURAT",
+    "to_station": "THANE",
+    "departure": "06:20",
+    "arrival": "10:05",
+    "duration_mins": 225
+  },
+  {
+    "train_no": "11003",
+    "train_name": "Tutari Express",
+    "from_station": "THANE",
+    "to_station": "MAJN",
+    "departure": "14:00",
+    "arrival": "07:30+1",
+    "duration_mins": 1050
+  },
+  {
+    "train_no": "12051",
+    "train_name": "Jan Shatabdi Express",
+    "from_station": "SURAT",
+    "to_station": "VASAI ROAD",
+    "departure": "08:30",
+    "arrival": "11:50",
+    "duration_mins": 200
+  },
+  {
+    "train_no": "10111",
+    "train_name": "Konkan Kanya Express",
+    "from_station": "VASAI ROAD",
+    "to_station": "MAJN",
+    "departure": "15:35",
+    "arrival": "09:15+1",
+    "duration_mins": 1060
+  },
+  {
+    "train_no": "11007",
+    "train_name": "Deccan Express",
+    "from_station": "SURAT",
+    "to_station": "PUNE",
+    "departure": "07:45",
+    "arrival": "14:30",
+    "duration_mins": 405
+  },
+  {
+    "train_no": "11013",
+    "train_name": "Coimbatore Express",
+    "from_station": "PUNE",
+    "to_station": "MAJN",
+    "departure": "19:45",
+    "arrival": "11:00+1",
+    "duration_mins": 915
+  },
+  {
+    "train_no": "12133",
+    "train_name": "Mangala Lakshadweep Express",
+    "from_station": "SURAT",
+    "to_station": "CSMT",
+    "departure": "10:00",
+    "arrival": "15:30",
+    "duration_mins": 330
+  },
+  {
+    "train_no": "10101",
+    "train_name": "Konkan Kanya Express",
+    "from_station": "CSMT",
+    "to_station": "MAJN",
+    "departure": "16:00",
+    "arrival": "07:45+1",
+    "duration_mins": 945
+  }
+]
