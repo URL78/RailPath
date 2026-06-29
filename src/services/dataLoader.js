@@ -8,33 +8,38 @@ const __dirname  = dirname(__filename);
 const SCHEDULES_PATH = join(__dirname, '../../data/schedules.json');
 const STATIONS_PATH  = join(__dirname, '../../data/stations.json');
 
-// ─── Load and index schedules ─────────────────────────────────────────────────
-// Returns a Map: trainNumber → array of stops (sorted by day + departure time)
-// We build this index once at startup — expensive to compute, cheap to query
-
 export async function loadSchedules() {
-    console.log('Loading schedules.json — this may take a moment...');
+    console.log('Loading schedules.json…');
     const raw  = await readFile(SCHEDULES_PATH, 'utf-8');
     const data = JSON.parse(raw);
     console.log(`Loaded ${data.length} schedule entries`);
 
-    // Group all stops by train number
-    // Python equivalent: defaultdict(list)
-    const byTrain = new Map();
+    const byTrain = new Map();       // trainNumber → stop[]
+    const stationToTrains = new Map(); // stationCode → Set<trainNumber>  ← NEW
 
     for (const entry of data) {
-        const num = entry.train_number;
+        const num  = entry.train_number;
+        const code = entry.station_code?.toUpperCase();
+
+        // Build byTrain (same as before)
         if (!byTrain.has(num)) byTrain.set(num, []);
         byTrain.get(num).push({
-            stationCode: entry.station_code?.toUpperCase(),
+            stationCode: code,
             stationName: entry.station_name,
-            arrival:     entry.arrival,     // "18:10:00" or "None"
-            departure:   entry.departure,   // "18:15:00" or "None"
-            day:         entry.day ?? 1,    // journey day (1, 2, 3...)
+            arrival:     entry.arrival,
+            departure:   entry.departure,
+            day:         entry.day ?? 1,
         });
+
+        // Build inverted index: station → which trains stop here
+        // This is the key change — O(1) lookup instead of scanning byTrain
+        if (code) {
+            if (!stationToTrains.has(code)) stationToTrains.set(code, new Set());
+            stationToTrains.get(code).add(num);
+        }
     }
 
-    // Sort each train's stops by day first, then departure time
+    // Sort each train's stops by day, then departure time (same as before)
     for (const [, stops] of byTrain) {
         stops.sort((a, b) => {
             if (a.day !== b.day) return a.day - b.day;
@@ -44,25 +49,20 @@ export async function loadSchedules() {
         });
     }
 
-    console.log(`Indexed ${byTrain.size} unique trains`);
-    return byTrain;
+    console.log(`Indexed ${byTrain.size} trains across ${stationToTrains.size} stations`);
+    return { byTrain, stationToTrains }; // ← now returns both
 }
 
-// ─── Load stations ────────────────────────────────────────────────────────────
-// Returns array of { code, name } — used for dropdown / search
 export async function loadStations() {
     const raw  = await readFile(STATIONS_PATH, 'utf-8');
     const data = JSON.parse(raw);
-    // stations.json is GeoJSON — properties are nested
     return data.features.map(f => ({
-        code: f.properties.code?.toUpperCase(),
-        name: f.properties.name,
+        code:  f.properties.code?.toUpperCase(),
+        name:  f.properties.name,
         state: f.properties.state,
     }));
 }
 
-// ─── Helper ───────────────────────────────────────────────────────────────────
-// Converts "18:15:00" to minutes from midnight. Returns null for "None".
 export function toMins(timeStr) {
     if (!timeStr || timeStr === 'None') return null;
     const parts = timeStr.split(':');
